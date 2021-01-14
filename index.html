@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Cisternian Clock</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <svg viewBox="0 0 2 4" id="clock" style="display: block;">
+      <path d="M1 0 L1 4" id="stem" stroke="black"/>
+      <svg viewBox="-1.05 -.05 1.1 1.1"  x="0" y="0" width="1" height="1" stroke="red">
+          <path d="M0 0 L1 1" id="hourMajor"  transform="scale(-1,1)"/>
+      </svg>
+      <svg viewBox="-0.05 -0.05 1.1 1.1" x="1" y="0" width="1" height="1" stroke="green" >
+          <path d="M0 0 L1 1" id="hourMinor" />
+      </svg>
+      <svg viewBox="-1.05 -.05 1.1 1.1" x="0" y="1.5" width="1" height="1" stroke="blue">
+          <path d="M0 0 L1 1" id="minuteMajor" transform="scale(-1,1)"/>
+      </svg>
+      <svg viewBox="-0.05 -0.05 1.1 1.1" x="1" y="1.5" width="1" height="1" stroke="purple">
+          <path d="M0 0 L1 1" id="minuteMinor" />
+      </svg>
+      <svg viewBox="-1.05 -.05 1.1 1.1" x="0" y="3" width="1" height="1" stroke="orange">
+          <path d="M0 0 L1 1" id="secondMajor" transform="scale(-1,1)"/>
+      </svg>
+      <svg viewBox="-0.05 -0.05 1.1 1.1" x="1" y="3" width="1" height="1" stroke="cyan">
+          <path d="M0 0 L1 1" id="secondMinor" />
+      </svg>
+   </svg>
+   <code><ty>const</ty> <va>body</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"body"</st><sy>)</sy><sy>;</sy>
+<ty>const</ty> <va>clock</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#clock"</st><sy>)</sy><sy>;</sy>
+
+<ty>function</ty> <fu>npt</fu><sy>(</sy><va>n</va><sy>)</sy><co>//numberToPath(n)</co>
+<sy>{</sy>
+  <co>// Parses the number and returns a string based
+    on the correct coordinates to form the shape.
+  </co>
+  <va>n</va> <si>=</si> <ty>parseInt</ty><sy>(</sy><va>n</va><sy>)</sy><sy>;</sy>
+  <ty>switch</ty><sy>(</sy><va>n</va><sy>)</sy>
+  <sy>{</sy>
+    <ty>case</ty> <va>1</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>0</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>]]);</sy>
+    <ty>case</ty> <va>2</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>1</va><sy>]]);</sy>
+    <ty>case</ty> <va>3</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>0</va><sy>],[</sy><va>1</va><sy>,</sy><va>1</va><sy>]]);</sy>
+    <ty>case</ty> <va>4</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>]]);</sy>
+    <ty>case</ty> <va>5</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>],[</sy><va>0</va><sy>,</sy><va>0</va><sy>]]);</sy>
+    <ty>case</ty> <va>6</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>1</va><sy>,</sy><va>0</va><sy>],[</sy><va>1</va><sy>,</sy><va>1</va><sy>]]);</sy>
+    <ty>case</ty> <va>7</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>1</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>],[</sy><va>0</va><sy>,</sy><va>0</va><sy>]]);</sy>
+    <ty>case</ty> <va>8</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>1</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>]]);</sy>
+    <ty>case</ty> <va>9</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>0</va><sy>,</sy><va>0</va><sy>],[</sy><va>1</va><sy>,</sy><va>0</va><sy>],[</sy><va>1</va><sy>,</sy><va>1</va><sy>],[</sy><va>0</va><sy>,</sy><va>1</va><sy>]]);</sy>
+    <ty>case</ty> <va>0</va><sy>:</sy> <ty>return</ty> <fu>ctp</fu><sy>([[</sy><va>-0.5</va><sy>,</sy><va>0</va><sy>],[</sy><va>-0.5</va><sy>,</sy><va>1</va><sy>]]);</sy>
+  <sy>}</sy>
+<sy>}</sy>
+
+<ty>function</ty> <fu>ctp</fu><sy>(</sy><va>n</va><sy>)</sy><co>//coordsToPath(points)</co>
+<sy>{</sy>
+  <co>// d="M0 1 L1 1 L1 0" >> _|
+  /*
+    00-----10
+    |    /  |
+    |  /    |
+    01-----11
+  */</co>
+
+  <ty>let</ty> <va>output</va> <si>=</si> <st>`M</st><fu>${</fu><va>points</va><sy>[</sy><va>0</va><sy>][</sy><va>0</va><sy>]</sy><fu>}</fu> <fu>${</fu><va>points</va><sy>[</sy><va>0</va><sy>][</sy><va>1</va><sy>]</sy><fu>}</fu> <st>`</st><sy>;</sy>
+  <ty>for</ty><sy>(</sy><ty>let</ty><va>i</va> <si>=</si> <va>1</va><sy>;</sy> <va>i</va> <si><</si> <va>points</va><sy>.</sy><cl>length</cl><sy>;</sy> <va>i</va><si>++</si><sy>)</sy>
+  <sy>{</sy>
+    <va>output</va> <si>+=</si> <st>`L</st><fu>${</fu><va>points</va><sy>[</sy><va>i</va><sy>][</sy><va>0</va><sy>]</sy><fu>}</fu> <fu>${</fu><va>points</va><sy>[</sy><va>i</va><sy>][</sy><va>1</va><sy>]</sy><fu>}</fu> <st>`</st>
+  <sy>}</sy>
+  <ty>return</ty> <va>output</va><sy>;</sy>
+<sy>}</sy>
+<ty>let</ty> <va>homa</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#hourMajor"</st><sy>)</sy><sy>;</sy>
+<ty>let</ty> <va>homi</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#hourMinor"</st><sy>)</sy><sy>;</sy>
+<ty>let</ty> <va>mima</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#minuteMajor"</st><sy>)</sy><sy>;</sy>
+<ty>let</ty> <va>mimi</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#minuteMinor"</st><sy>)</sy><sy>;</sy>
+<ty>let</ty> <va>sema</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#secondMajor"</st><sy>)</sy><sy>;</sy>
+<ty>let</ty> <va>semi</va> <si>=</si> <cl>document</cl><sy>.</sy><fu>querySelector</fu><sy>(</sy><st>"#secondMinor"</st><sy>)</sy><sy>;</sy>
+
+<ty>function</ty> <fu>step</fu><sy>()</sy>
+<sy>{</sy>
+    <ty>let</ty> <va>time</va> <si>=</si> <cl>Date</cl><sy>.</sy><fu>call</fu><sy>()</sy>
+    <ty>let</ty> <va>hour</va> <si>=</si> <sy>[</sy><va>time</va><sy>[</sy><va>16</va><sy>],</sy><va>time</va><sy>[</sy><va>17</va><sy>]</sy><sy>];</sy>
+    <ty>let</ty> <va>minute</va> <si>=</si> <sy>[</sy><va>time</va><sy>[</sy><va>19</va><sy>],</sy><va>time</va><sy>[</sy><va>20</va><sy>]</sy><sy>];</sy>
+    <ty>let</ty> <va>second</va> <si>=</si> <sy>[</sy><va>time</va><sy>[</sy><va>22</va><sy>],</sy><va>time</va><sy>[</sy><va>23</va><sy>]</sy><sy>];</sy>
+
+      <co>// This changes the colour based on the current hour</co>
+
+    <ty>let</ty> <va>hue</va> <si>=</si> <va>360</va> <si>/</si> <va>24</va> <si>*</si> <ty>parseInt</ty><sy>(</sy><va>hour</va><sy>[</sy><va>0</va><sy>]</sy><si>+</si><va>hour</va><sy>[</sy><va>1</va><sy>]);</sy>
+    <cl>document<sy>.</sy>documentElement<sy>.</sy>style</cl><sy>.<fu>setProperty</fu>(<st>"--hue"</st>,<va>hue</va>);</sy>
+
+    <sy><va>homa</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>hour</va>[<va>0</va>]);</sy>
+    <sy><va>homi</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>hour</va>[<va>1</va>]);</sy>
+    <sy><va>mima</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>minute</va>[<va>0</va>]);</sy>
+    <sy><va>mimi</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>minute</va>[<va>1</va>]);</sy>
+    <sy><va>sema</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>second</va>[<va>0</va>]);</sy>
+    <sy><va>semi</va>.<cl>attributes</cl>.<va>d</va>.<ty>nodeValue</ty></sy> <si>=</si> <sy><fu>ntp</fu>(<va>second</va>[<va>1</va>]);</sy>
+<sy>}</sy>
+
+<sy><ty>setInterval</ty>(<fu>step</fu>,<va>100</va>)</sy>
+   </code>
+   <script src="script.js" charset="utf-8"></script>
+  </body>
+</html>
